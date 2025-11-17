@@ -1,7 +1,8 @@
 # Community Detection with Spectral Modularity
 This project implements a recursive community detection algorithm on the famous Zachary's Karate Club graph. The goal is to explore how network communities can be discovered by repeatedly splitting the graph based on the principles of spectral modularity.
 
-We will:
+We will
+
 
 1.Load the Karate Club graph using networkx.
 2.Implement the spectral bisection algorithm, which recursively splits communities to maximize modularity.
