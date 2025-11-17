@@ -1,12 +1,12 @@
-Community Detection with Spectral Modularity
+# Community Detection with Spectral Modularity
 This project implements a recursive community detection algorithm on the famous Zachary's Karate Club graph. The goal is to explore how network communities can be discovered by repeatedly splitting the graph based on the principles of spectral modularity.
 
 We will:
 
-Load the Karate Club graph using networkx.
-Implement the spectral bisection algorithm, which recursively splits communities to maximize modularity.
-Track the evolution of four key centrality metrics (Degree, Betweenness, Closeness, and Clustering) for each node across all splits.
-Visualize the community splits and the metric evolution to understand how a node's role changes as its community is refined.
+1.Load the Karate Club graph using networkx.
+2.Implement the spectral bisection algorithm, which recursively splits communities to maximize modularity.
+3.Track the evolution of four key centrality metrics (Degree, Betweenness, Closeness, and Clustering) for each node across all splits.
+4.Visualize the community splits and the metric evolution to understand how a node's role changes as its community is refined.
 !pip install \
     --trusted-host pypi.org \
     --trusted-host files.pythonhosted.org \
@@ -26,13 +26,14 @@ Requirement already satisfied: six>=1.5 in ./lib/python3.13/site-packages (from 
 
 [notice] A new release of pip is available: 25.2 -> 25.3
 [notice] To update, run: pip install --upgrade pip
-Setup and Library Imports
-This first block of code sets up our environment. We import the necessary libraries:
 
-networkx for creating, manipulating, and studying the graph.
-numpy for efficient numerical operations, especially with matrices.
-matplotlib.pyplot for all of our plotting.
-We also set up the notebook to display plots "inline" and define a default figure size for our visualizations.
+#Setup and Library Imports
+#This first block of code sets up our environment. We import the necessary libraries:
+
+-networkx for creating, manipulating, and studying the graph.
+-numpy for efficient numerical operations, especially with matrices.
+-matplotlib.pyplot for all of our plotting.
+-We also set up the notebook to display plots "inline" and define a default figure size for our visualizations.
 
 import networkx as nx
 import numpy as np
@@ -44,7 +45,8 @@ import warnings
 
 plt.rcParams['figure.figsize'] = (10, 7)  #fixing configurations for the rest of the map
 warnings.filterwarnings('ignore')
-Load the Dataset: Zachary's Karate Club
+
+# Load the Dataset: Zachary's Karate Club
 This cell performs the first key steps of the project, corresponding to Task 1 (Data Loading) and Task 2 (Visualization Setup).
 
 G = nx.karate_club_graph(): We load the famous Zachary's Karate Club graph into a networkx graph object called G. This graph will be the single source of data for our entire analysis.
@@ -61,7 +63,7 @@ pos = nx.spring_layout(G, seed=42)  #to fix the cordinate of the nodes so that t
 Graph Info:
 Nodes: 34
 Edges: 78
-Task 3: Implementing the Modularity Matrix
+# Task 3: Implementing the Modularity Matrix
 This cell defines the core function modularity_matrix(G), which is the heart of Task 3. This function is responsible for calculating the Modularity Matrix (
 ) for a given graph. This matrix is the foundation of the spectral modularity algorithm, as its eigenvectors will later reveal the graph's natural "fault lines" or community structures.
 
@@ -113,7 +115,7 @@ def modularity_matrix(G):
     B = A - expected_edges # modularity matrix is calculated here
     
     return B
-The Main Algorithm: find_communities
+# The Main Algorithm: find_communities
 This cell defines the primary function find_communities(G), which is the engine for the entire analysis. This single function implements Task 1 (Recursive Bisection), Task 3 (Spectral Modularity), and Task 4 (Metric Calculation).
 
 The function uses a queue-based iterative bisection approach:
@@ -123,7 +125,7 @@ A final_communities list (a "done" list) is created to hold communities that are
 The partition_history and metric_history lists are initialized to store the results from each iteration for later plotting.
 The while queue: loop continues as long as there are communities in the "to-do" list. Each loop has two main parts:
 
-Part A: Metric Calculation (Task 4)
+# Part A: Metric Calculation (Task 4)
 First, before any splitting, the code calculates the centrality metrics for the current state of the graph.
 
 It defines current_partition as all communities in the "done" list (final_communities) plus all communities in the "to-do" list (queue).
@@ -131,7 +133,7 @@ It records this partition in partition_history (for Task 2 plots).
 It then loops through every community C in this partition, creates a sub_G subgraph, and calculates the local centrality metrics (Degree, Betweenness, Closeness, Clustering) for all nodes within that subgraph.
 This is a key concept: a node's centrality is re-calculated at each step relative to its new, smaller community.
 All metrics for this iteration are saved in metric_history.
-Part B: Spectral Bisection (Tasks 1 & 3)
+# Part B: Spectral Bisection (Tasks 1 & 3)
 Second, the code attempts to split the next community in the queue.
 
 nodes_to_split = queue.pop(0): It pulls the next community from the "to-do" list.
@@ -276,11 +278,11 @@ def find_communities(G):
         iteration += 1
 
     return partition_history, metric_history
-Executing the Algorithm & Final Results
+# Executing the Algorithm & Final Results
 This is the main execution cell where the entire analysis is performed. We now call the find_communities(G) function defined in the previous step.
 
-partitions, metrics = find_communities(G): This line executes the algorithm. It will loop until all communities are finalized, saving the state of the graph's partitions and node metrics at every iteration. This single function call performs all the work required for the analysis.
-print(...) Statements: After the function completes, we print a summary of the results.
+# 1.partitions, metrics = find_communities(G): This line executes the algorithm. It will loop until all communities are finalized, saving the state of the graph's partitions and node metrics at every iteration. This single function call performs all the work required for the analysis.
+# 2.print(...) Statements: After the function completes, we print a summary of the results.
 We calculate the total number of splits by checking the length of the partitions history (subtracting 1 for the initial state).
 We then extract the final_partition (which is the last item in the partition_history).
 Finally, we loop through and print each individual community, sorted, to clearly show the final grouping of nodes that the algorithm has identified.
@@ -303,19 +305,19 @@ Final Partition (5 communities):
   Community 3: [23, 24, 25, 27, 28, 31]
   Community 4: [4, 5, 6, 10, 16]
   Community 5: [11]
-Visualizing the Community Splits
+# Visualizing the Community Splits
 Now that we have the results, this cell fulfills Task 2 (Visualization). We loop through the partition_history (which was returned as partitions) and generate a plot for each iteration. This allows us to create a "time-lapse" of how the graph was split.
 
 For each iteration, the code does the following:
 
-plt.figure(...): Creates a new, blank figure for this iteration's plot.
-Assign Colors: A unique color is assigned to each distinct community in the current partition using a rainbow colormap. This ensures that nodes [1, 2] will have the same color, which will be different from nodes [3, 4].
-nx.draw(...): This is the main plotting command. It draws the graph G using our three key requirements:
-pos: It uses the fixed spring layout we computed in Cell 3. This is essential, as it ensures the nodes don't move between plots, making the splits easy to see.
-node_color=color_list: It colors each node according to its community.
-with_labels=True: It labels every node with its ID (0-33).
-plt.title(...): It adds a title to each plot, such as "Iteration 0: 1 Communities" or "Iteration 1: 2 Communities".
-plt.show(): It displays the plot in the notebook before moving to the next iteration.
+# 1.plt.figure(...): Creates a new, blank figure for this iteration's plot.
+# 2.Assign Colors: A unique color is assigned to each distinct community in the current partition using a rainbow colormap. This ensures that nodes [1, 2] will have the same color, which will be different from nodes [3, 4].
+# 3.nx.draw(...): This is the main plotting command. It draws the graph G using our three key requirements:
+-pos: It uses the fixed spring layout we computed in Cell 3. This is essential, as it ensures the nodes don't move between plots, making the splits easy to see.
+-node_color=color_list: It colors each node according to its community.
+-with_labels=True: It labels every node with its ID (0-33).
+# 4.plt.title(...): It adds a title to each plot, such as "Iteration 0: 1 Communities" or "Iteration 1: 2 Communities".
+# 5.plt.show(): It displays the plot in the notebook before moving to the next iteration.
 The final output is a series of graphs, one for each step of the algorithm, showing the progression from a single community to the final set of communities.
 
 print("--- Visualizing Community Splits ---")
